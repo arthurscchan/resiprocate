@@ -40,6 +40,11 @@ cmake --build _build --target fuzzUtil fuzzStack aresfuzz aresfuzzname
 cp _build/rutil/test/fuzzUtil $OUT/
 cp _build/resip/stack/test/fuzzStack $OUT/
 
-# those fuzz targets are too small
-#  See: https://github.com/google/oss-fuzz/issues/1331
-#cp _build/rutil/dns/ares/{aresfuzz,aresfuzzname} $OUT/
+# seed corpora for the bundled c-ares DNS wire-format fuzzers; shipping the
+# targets themselves was disabled by the comment below years ago, but the
+# ares_parse_*_reply functions parse attacker-controlled DNS bytes and are
+# worth fuzzing regardless of their size.
+cp _build/rutil/dns/ares/aresfuzz $OUT/
+cp _build/rutil/dns/ares/aresfuzzname $OUT/
+(cd build/oss-fuzz/aresfuzz-seeds && zip -qj "$OUT/aresfuzz_seed_corpus.zip" ./*)
+(cd build/oss-fuzz/aresfuzzname-seeds && zip -qj "$OUT/aresfuzzname_seed_corpus.zip" ./*)
